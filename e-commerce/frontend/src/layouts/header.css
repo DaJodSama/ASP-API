@@ -1,0 +1,12 @@
+.search-results-container {
+    max-height: 200px; /* Điều chỉnh kích thước tối đa của phần hiển thị */
+    overflow-y: auto; /* Hiển thị thanh cuộn khi nội dung vượt quá kích thước tối đa */
+    position: absolute; /* Tạo vị trí tuyệt đối để không bị đè lên bởi các thành phần khác */
+    background-color: #fff; /* Màu nền */
+    border: 1px solid #ddd; /* Viền */
+    border-radius: 5px; /* Bo tròn góc */
+    z-index: 999; /* Đảm bảo hiển thị trên tất cả các thành phần khác */
+    width: calc(100% - 40px); /* Điều chỉnh chiều rộng */
+    left: 20px; /* Canh lề trái */
+    top: 50px; /* Canh lề trên */
+}

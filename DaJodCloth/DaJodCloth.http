@@ -1,0 +1,6 @@
+@DaJodCloth_HostAddress = http://localhost:5239
+
+GET {{DaJodCloth_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

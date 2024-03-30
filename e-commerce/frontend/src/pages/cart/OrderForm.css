@@ -1,0 +1,58 @@
+
+.order-form-container {
+    overflow-y: auto;
+    max-height: 100vh;
+    max-width: 600px; /* Đặt chiều rộng tối đa của form */
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .order-form-title {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  .order-form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-label {
+    margin-top: 5px;
+    font-weight: bold;
+  }
+  
+  .form-input,
+  .form-textarea,
+  .form-select {
+    margin-top: 5px;
+    padding: 12px;
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+  }
+  
+  .form-textarea {
+    resize: vertical;
+  }
+  
+  .form-button {
+    margin-top: 10px;
+    padding: 15px;
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  .form-button:hover {
+    background-color: #2980b9;
+  }
+  
