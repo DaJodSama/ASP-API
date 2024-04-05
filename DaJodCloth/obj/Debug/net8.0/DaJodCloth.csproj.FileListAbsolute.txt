@@ -134,3 +134,4 @@ D:\Asp API\DaJodCloth\obj\Debug\net8.0\refint\DaJodCloth.dll
 D:\Asp API\DaJodCloth\obj\Debug\net8.0\DaJodCloth.pdb
 D:\Asp API\DaJodCloth\obj\Debug\net8.0\DaJodCloth.genruntimeconfig.cache
 D:\Asp API\DaJodCloth\obj\Debug\net8.0\ref\DaJodCloth.dll
+D:\Asp API\DaJodCloth\obj\Debug\net8.0\DaJodCloth.sourcelink.json

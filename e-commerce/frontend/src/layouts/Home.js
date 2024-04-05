@@ -18,9 +18,9 @@ function Home() {
 			{/* <Apparel /> */}
 			{/* <Electronics /> */}
 			<Items />
-			<Request />
-			{/* <Services />
-			<Region /> */}
+			{/* <Request /> */}
+			<Services />
+			<Region />
 			<Subscribe />
 		</div>
 	);

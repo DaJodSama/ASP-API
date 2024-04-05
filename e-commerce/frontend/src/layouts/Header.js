@@ -5,6 +5,7 @@ import { GET_ALL } from "./../api/apiService";
 import SearchCategoryResults from "./SearchCategoryResults";
 import "./header.css";
 import axios from "axios";
+import { useAuth } from "./AuthContext";
 
 function Header() {
 	const [categories, setCategories] = useState([]);
@@ -13,6 +14,8 @@ function Header() {
 	const [showSearchResults, setShowSearchResults] = useState(false);
 
 	const navigate = useNavigate();
+
+	const { user, logout } = useAuth();
 
 	useEffect(() => {
 		GET_ALL(`Product`).then((item) => setCategories(item.data));
@@ -29,6 +32,10 @@ function Header() {
 		setShowSearchResults(false);
 	};
 
+	//LOGOUT
+	const handleLogout = () => {
+		logout();
+	  };
 	return (
 		<header className="section-header">
 			<section className="header-main border-bottom">
@@ -60,7 +67,7 @@ function Header() {
 									<select
 										className="custom-select border-right"
 										name="category_name">
-										<option value="">All type</option>
+										<option value="">Tất cả</option>
 										{categories.map((category) => (
 											<option
 												key={category.id}
@@ -83,8 +90,8 @@ function Header() {
 										<button
 											className="btn btn-primary"
 											type="submit">
-											<i className="fa fa-search"></i>{" "}
-											Search
+											<i className="fa fa-search"></i> Tìm
+											kiếm
 										</button>
 									</div>
 								</div>
@@ -102,26 +109,13 @@ function Header() {
 						<div className="col-xl-4 col-lg-4 col-md-6">
 							<div className="widgets-wrap float-md-right">
 								<div className="widget-header mr-3">
-									<Link to="/" className="widget-view">
+									<Link to="/profile" className="widget-view">
 										<div className="icon-area">
 											<i className="fa fa-user"></i>
-											<span className="notify">3</span>
 										</div>
 										<small className="text">
 											{" "}
-											My profile{" "}
-										</small>
-									</Link>
-								</div>
-								<div className="widget-header mr-3">
-									<Link to="/" className="widget-view">
-										<div className="icon-area">
-											<i className="fa fa-comment-dots"></i>
-											<span className="notify">1</span>
-										</div>
-										<small className="text">
-											{" "}
-											Message{" "}
+											Thông tin{" "}
 										</small>
 									</Link>
 								</div>
@@ -130,7 +124,10 @@ function Header() {
 										<div className="icon-area">
 											<i className="fa fa-store"></i>
 										</div>
-										<small className="text"> Orders </small>
+										<small className="text">
+											{" "}
+											Đơn hàng{" "}
+										</small>
 									</Link>
 								</div>
 								<div className="widget-header">
@@ -140,7 +137,10 @@ function Header() {
 										<div className="icon-area">
 											<i className="fa fa-shopping-cart"></i>
 										</div>
-										<small className="text"> Cart </small>
+										<small className="text">
+											{" "}
+											Giỏ hàng{" "}
+										</small>
 									</Link>
 								</div>
 							</div>
@@ -150,32 +150,51 @@ function Header() {
 			</section>{" "}
 			<nav className="navbar navbar-main navbar-expand-lg border-bottom">
 				<div className="container">
-					<button
-						className="navbar-toggler"
-						type="button"
-						data-toggle="collapse"
-						data-target="#main_nav"
-						aria-controls="main_nav"
-						aria-expanded="false"
-						aria-label="Toggle navigation">
-						<span className="navbar-toggler-icon"></span>
-					</button>
-
 					<div className="collapse navbar-collapse" id="main_nav">
-						<ul className="navbar-nav">
-							<li className="nav-item">
-								<Link className="nav-link" to="/">
-									Trang Chủ
-								</Link>
-							</li>
-							<li className="nav-item">
-								<Link className="nav-link" to="/products">
-									Tất cả sản phẩm
-								</Link>
-							</li>
-						</ul>
-						<ul className="navbar-nav ml-md-auto">
-							
+						{user ? (
+							<>
+								<ul className="navbar-nav">
+									<li className="nav-item">
+										<Link className="nav-link" to="/">
+											Trang Chủ
+										</Link>
+									</li>
+									<li className="nav-item">
+										<Link
+											className="nav-link"
+											to="/products">
+											Tất cả sản phẩm
+										</Link>
+									</li>
+								</ul>
+								<ul className="navbar-nav ml-md-auto">
+								<li className="nav-item">
+											Xin chào {user.lastName}
+									</li>
+									<li className="nav-item" onClick={handleLogout}>
+										<Link className="nav-link" to="/login">
+											Đăng xuất
+										</Link>
+									</li>
+								</ul>
+							</>
+						) : (
+							<>
+								<ul className="navbar-nav">
+									<li className="nav-item">
+										<Link className="nav-link" to="/">
+											Trang Chủ
+										</Link>
+									</li>
+									<li className="nav-item">
+										<Link
+											className="nav-link"
+											to="/products">
+											Tất cả sản phẩm
+										</Link>
+									</li>
+								</ul>
+								<ul className="navbar-nav ml-md-auto">
 									<li className="nav-item">
 										<Link className="nav-link" to="/login">
 											Đăng nhập
@@ -188,7 +207,9 @@ function Header() {
 											Đăng ký
 										</Link>
 									</li>
-						</ul>
+								</ul>
+							</>
+						)}
 					</div>
 				</div>
 			</nav>

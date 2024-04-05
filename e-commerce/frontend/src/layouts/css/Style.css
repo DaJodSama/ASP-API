@@ -1,0 +1,63 @@
+
+  /* CSS */
+/* header */
+.text{
+  text-decoration: none;
+}
+.navbar-nav {
+    display: flex;
+    align-items: center; /* Căn giữa theo chiều dọc */
+  }
+  
+  .navbar-nav .nav-item {
+    margin-right: 15px; /* Khoảng cách giữa các mục */
+  }
+  
+  .navbar-nav.ml-md-auto {
+    margin-left: auto; /* Đẩy mục này sang phải cùng */
+  }
+  .widget-view, .widget-view:hover {
+    text-decoration: none;
+  }
+  /* slide */
+  video {
+    width: 100%;
+    height: auto;
+    outline: none; /* Loại bỏ đường viền xung quanh video khi được tập trung */
+    border: none; /* Loại bỏ đường viền của thẻ video */
+  }
+
+/* ẩn thanh điều khiển  */
+video::-webkit-media-controls {  
+    display: none;
+  }
+  
+
+  /* product  */
+  .title {
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  
+ .title-prd:hover {
+  color: rgb(243, 115, 136); /* hoặc màu hồng mong muốn */
+}
+/* Danh Muc  */
+.card-title {
+  text-decoration: none; /* Loại bỏ gạch chân từ tiêu đề */
+  /* Thêm các quy tắc CSS khác cho tiêu đề nếu cần */
+}
+
+/* footer */
+.section-footer a {
+  text-decoration: none;
+  color: inherit; /* Giữ màu sắc mặc định cho các liên kết */
+}
+/* cart */
+figcaption.info a {
+  text-decoration: none;
+  color: rgb(47, 47, 47);
+}
+figcaption.info a:hover {
+color: rgb(255, 55, 192);
+}

@@ -30,6 +30,9 @@ namespace DaJodCloth.Controllers
                 Password = p.Password
             }).ToList();
 
+            var totalResults = UserDtos.Count;
+            Response.Headers.Append("Content-Range", $"{totalResults}");
+
             return Ok(UserDtos);
         }
 
@@ -69,6 +72,9 @@ namespace DaJodCloth.Controllers
 
             prdDto.Id = User.Id;
 
+            var totalResults = await _context.Users.CountAsync(); // Số lượng người dùng trong cơ sở dữ liệu
+            Response.Headers.Append("Content-Range", $"{totalResults}");
+
             return CreatedAtAction(nameof(GetUser), new { id = User.Id }, prdDto);
         }
 
@@ -86,6 +92,9 @@ namespace DaJodCloth.Controllers
             dbUser.Password = updateUser.Password;
 
             await _context.SaveChangesAsync();
+
+            var totalResults = await _context.Users.CountAsync(); // Số lượng người dùng trong cơ sở dữ liệu
+            Response.Headers.Append("Content-Range", $"{totalResults}");
 
             return Ok(await _context.Users.ToListAsync());
         }

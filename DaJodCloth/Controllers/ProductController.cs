@@ -33,6 +33,9 @@ namespace DaJodCloth.Controllers
                 CategoryId = p.CategoryId
             }).ToList();
 
+            var totalResults = productDtos.Count;
+            Response.Headers.Append("Content-Range", $"{totalResults}");
+
             return Ok(productDtos);
         }
 
@@ -78,6 +81,10 @@ namespace DaJodCloth.Controllers
 
             prdDto.Id = product.Id;
 
+            // Lấy tổng số lượng sản phẩm sau khi thêm mới
+            var totalResults = await _context.Products.CountAsync();
+            Response.Headers.Append("Content-Range", $"{totalResults}");
+
             return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, prdDto);
         }
 
@@ -85,28 +92,45 @@ namespace DaJodCloth.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<List<ProductDto>>> UpdateProduct(int id, ProductDto updatePrd)
         {
-            if (id != updatePrd.Id)
+            try
             {
-                return BadRequest("Product ID mismatch.");
-            }
+                // Kiểm tra ID của sản phẩm trong yêu cầu cập nhật
+                if (id != updatePrd.Id)
+                {
+                    return BadRequest("Product ID mismatch.");
+                }
 
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
+                // Tìm sản phẩm cần cập nhật trong cơ sở dữ liệu
+                var product = await _context.Products.FindAsync(id);
+                if (product == null)
+                {
+                    return NotFound("Product not found.");
+                }
+
+                // Cập nhật thông tin của sản phẩm từ dữ liệu đầu vào
+                product.Name = updatePrd.Name;
+                product.Description = updatePrd.Description;
+                product.Price = (int)updatePrd.Price;
+                product.Discount = updatePrd.Discount;
+                product.Img = updatePrd.Img;
+                product.Status = updatePrd.Status;
+                product.CategoryId = updatePrd.CategoryId;
+
+                // Lưu thay đổi vào cơ sở dữ liệu
+                await _context.SaveChangesAsync();
+
+                // Lấy tổng số lượng sản phẩm sau khi cập nhật
+                var totalResults = await _context.Products.CountAsync();
+                Response.Headers.Append("Content-Range", $"{totalResults}");
+
+                // Trả về danh sách sản phẩm sau khi cập nhật thành công
+                return Ok(await _context.Products.ToListAsync());
+            }
+            catch (Exception ex)
             {
-                return NotFound("Product not found.");
+                // Xử lý nếu có lỗi xảy ra
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
-
-            product.Name = updatePrd.Name;
-            product.Description = updatePrd.Description;
-            product.Price = (int)updatePrd.Price;
-            product.Discount = updatePrd.Discount;
-            product.Img = updatePrd.Img;
-            product.Status = updatePrd.Status;
-            product.CategoryId = updatePrd.CategoryId;
-
-            await _context.SaveChangesAsync();
-
-            return Ok(await _context.Products.ToListAsync());
         }
 
         [HttpDelete("{id}")]
@@ -246,6 +270,31 @@ namespace DaJodCloth.Controllers
         private bool CartExists(int id)
         {
             return _context.Cart.Any(e => e.Id == id);
+        }
+
+        [HttpGet("search")]
+        public async Task<ActionResult<List<ProductDto>>> SearchProducts(string name)
+        {
+            // Tìm kiếm sản phẩm theo tên
+            var products = await _context.Products
+                .Where(p => p.Name.Contains(name))
+                .ToListAsync();
+
+            // Chuyển đổi danh sách sản phẩm thành DTO
+            var productDtos = products.Select(p => new ProductDto
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Description = p.Description,
+                Price = p.Price,
+                Discount = p.Discount,
+                Img = p.Img,
+                Status = p.Status,
+                CategoryId = p.CategoryId
+            }).ToList();
+
+            // Trả về danh sách sản phẩm kết quả
+            return Ok(productDtos);
         }
     }
 }

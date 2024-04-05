@@ -27,6 +27,11 @@ namespace DaJodCloth.Controllers
                                       Name = c.Name
                                   })
                                   .ToListAsync();
+            // Đếm tổng số lượng danh mục
+            var totalCategories = await _context.Categories.CountAsync();
+
+            // Thêm tiêu đề "Content-Range" vào phản hồi
+            Response.Headers.Append("Content-Range", $"{totalCategories}");
 
             return Ok(categories);
         }
@@ -62,6 +67,9 @@ namespace DaJodCloth.Controllers
 
             // Sau khi thêm thành công, cập nhật lại Id của categoryDto
             categoryDto.Id = category.Id;
+
+            // Sử dụng phương thức Append để thêm tiêu đề "Content-Range" vào phản hồi
+            Response.Headers.Append("Content-Range", $"{_context.Categories.Count()}");
 
             return CreatedAtAction(nameof(GetCategory), new { id = category.Id }, categoryDto);
         }
@@ -102,6 +110,9 @@ namespace DaJodCloth.Controllers
                     throw;
                 }
             }
+
+            // Thêm tiêu đề "Content-Range" vào phản hồi
+            Response.Headers.Append("Content-Range", $"{_context.Categories.Count()}");
 
             return NoContent();
         }

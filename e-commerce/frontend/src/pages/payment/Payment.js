@@ -1,51 +1,44 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../../layouts/AuthContext";
 
 const Payment = () => {
+	const { user } = useAuth();
+	const location = useLocation();
+	const totalPrice = location.state ? location.state.totalPrice : 0;
+	
 	const navigate = useNavigate();
-  const location = useLocation();
-  const totalPrice = location.state && location.state.totalPrice;
+	
+	const [orderData, setOrderData] = useState({
+		odPrdUserId: user.id, // Sử dụng ID người dùng từ props
+		orderTotal: totalPrice,
+		orderDate: new Date().toISOString(),
+		orderStatus: 1,
+	});
 
-  const [paymentData, setPaymentData] = useState({
-    odPrdUserId: 4,
-    orderDate: new Date().toISOString(),
-    orderTotal: 1000 || 0, // Sử dụng totalPrice hoặc một giá trị mặc định
-    orderStatus: 1,
-  });
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await axios.get("http://localhost:5239/api/User");
-        const userId = response.data.id;
-        setPaymentData((prevData) => ({ ...prevData, odPrdUserId: userId }));
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
-
-    fetchUserData();
-  }, []);
-
-	const handleSubmit = async (event) => {
-		event.preventDefault();
-		try {
-			await axios.post(
-				"http://localhost:5239/api/OrderProduct",
-				paymentData
-			);
-			alert("Thanh toán thành công, Nhấn Ok để quay lại giỏ hàng");
-			navigate("/cart");
-		} catch (error) {
-			console.error("Error submitting payment data:", error);
-		}
+	const handleInputChange = (e) => {
+		const { name, value } = e.target;
+		setOrderData({
+			...orderData,
+			[name]: value,
+		});
 	};
 
-	const defaultTotalPrice = 0;
-
-  // Sử dụng totalPrice nếu tồn tại, ngược lại sử dụng giá trị mặc định
-  const orderTotal = totalPrice !== undefined ? totalPrice : defaultTotalPrice;
+	const handleSubmit = (e) => {
+		e.preventDefault();
+		axios
+		  .post("http://localhost:5239/api/OrderProduct", orderData)
+		  .then((response) => {
+			alert("Đơn hàng đã được đặt thành công!");
+			localStorage.removeItem("cartItems");
+			navigate("/shopping-cart");
+		  })
+		  .catch((error) => {
+			console.error(error);
+			alert("Đã có lỗi xảy ra. Vui lòng thử lại sau!");
+		  });
+	  };
 
 	return (
 		<section className="section-content padding-y">
@@ -62,7 +55,10 @@ const Payment = () => {
 									<input
 										type="text"
 										className="form-control"
-										value={paymentData.odPrdUserId}
+										name="odPrdUserId"
+										value={orderData.odPrdUserId}
+										onChange={handleInputChange}
+										required
 										readOnly
 									/>
 								</div>
@@ -72,7 +68,7 @@ const Payment = () => {
 										type="text"
 										className="form-control"
 										value={new Date(
-											paymentData.orderDate
+											orderData.orderDate
 										).toLocaleString()}
 										readOnly
 									/>
@@ -84,7 +80,8 @@ const Payment = () => {
 									<input
 										type="text"
 										className="form-control"
-										value={paymentData.orderTotal}
+										value={orderData.orderTotal}
+										onChange={handleInputChange}
 										readOnly
 									/>
 								</div>
@@ -93,14 +90,20 @@ const Payment = () => {
 									<input
 										type="text"
 										className="form-control"
-										value={paymentData.orderStatus}
+										value={orderData.orderStatus}
+										onChange={handleInputChange}
 										readOnly
 									/>
 								</div>
 							</div>
-							<button className="button" type="submit">
-								Xác Nhận
-							</button>
+							<div class="d-flex justify-content-center">
+								<button
+									className="btn btn-info"
+									type="submit"
+									onClick={handleSubmit}>
+									Xác Nhận
+								</button>
+							</div>
 						</form>
 					</div>
 				</div>

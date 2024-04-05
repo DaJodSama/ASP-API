@@ -1,149 +1,113 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../layouts/AuthContext";
 
-const Login = () => {
+const UserLogin = () => {
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
+	const [error, setError] = useState("");
 	const navigate = useNavigate();
+	const { login } = useAuth(); // Use the login function from the context
 
-	const [rememberPassword, setRememberPassword] = useState(true);
-	const [users, setUsers] = useState([]);
-	const [loggedInUser, setLoggedInUser] = useState(null);
-	const [showLoginForm, setShowLoginForm] = useState(true);
-	const [loginError, setLoginError] = useState(false);
+	const handleLogin = async () => {
+		try {
+			if (email && password) {
+				const response = await axios.get(
+					"http://localhost:5239/api/User",
+					{
+						params: {
+							email,
+						},
+					}
+				);
 
-	const handleRememberToggle = () => {
-		setRememberPassword(!rememberPassword);
-	};
+				const user = response.data.find((user) => user.email === email);
 
-	const handleLogin = (e) => {
-		e.preventDefault();
+				if (user) {
+					const isPasswordValid = user.password === password;
 
-		const emailInput = document.getElementById("emailInput").value;
-		const passwordInput = document.getElementById("passwordInput").value;
-
-		const user = users.find(
-			(user) =>
-				user.email === emailInput && user.password === passwordInput
-		);
-
-		if (user) {
-			setLoggedInUser(user); // Cập nhật state loggedInUser trong Header component
-			setShowLoginForm(false);
-			localStorage.setItem("loggedInUser", JSON.stringify(user));
-			setLoginError(false);
-
-			alert("Đăng nhập thành công!");
-
-			navigate("/");
-		} else {
-			setLoginError(true);
+					if (isPasswordValid) {
+						const { id, firstName, lastName, email, token } = user;
+						login(id, firstName, lastName, email, token);
+						alert("Đăng nhập thành công");
+						navigate("/");
+					} else {
+						setError(
+							"Mật khẩu không đúng. Vui lòng kiểm tra lại thông tin."
+						);
+					}
+				} else {
+					setError(
+						"Email không tồn tại. Vui lòng kiểm tra lại thông tin."
+					);
+				}
+			} else {
+				setError("Tên đăng nhập và mật khẩu là bắt buộc");
+			}
+		} catch (error) {
+			console.error("Đăng nhập thất bại:", error);
+			if (error.response) {
+				setError(`Đăng nhập thất bại. ${error.response.data.message}`);
+			} else {
+				setError("Đăng nhập thất bại. Vui lòng thử lại.");
+			}
 		}
-	};
-
-	useEffect(() => {
-		axios.get("http://localhost:5239/api/User").then((response) => {
-			setUsers(response.data);
-		});
-
-		const savedUser = localStorage.getItem("loggedInUser");
-		if (savedUser) {
-			setLoggedInUser(JSON.parse(savedUser));
-			setShowLoginForm(false);
-		}
-	}, []);
-
-	const handleLogout = () => {
-		setLoggedInUser(null);
-		setShowLoginForm(true);
-		localStorage.removeItem("loggedInUser");
 	};
 
 	return (
-		<div className="container mt-5">
-			<div className="row justify-content-center">
-				<div className="col-md-6">
-					<div className="card">
-						<div className="card-body">
-							<h2 className="text-center mb-4">Đăng Nhập</h2>
-							{loggedInUser ? (
-								<div>
-									<p className="text-success">
-										Bạn đã đăng nhập thành công!
-									</p>
-									<button
-										className="btn btn-primary btn-block"
-										onClick={handleLogout}>
-										Đăng xuất
-									</button>
-								</div>
-							) : (
-								showLoginForm && (
-									<form onSubmit={handleLogin}>
-										<div className="form-group">
-											<input
-												id="emailInput"
-												name="email"
-												className="form-control"
-												placeholder="Username"
-												type="text"
-											/>
-										</div>
-										<div className="form-group">
-											<input
-												id="passwordInput"
-												name="password"
-												className="form-control"
-												placeholder="Password"
-												type="password"
-											/>
-										</div>
-
-										<div className="form-group">
-											<a
-												href="/Register"
-												className="float-right">
-												Đăng ký
-											</a>
-											<label className="float-left custom-control custom-checkbox">
-												<input
-													type="checkbox"
-													className="custom-control-input"
-													checked={rememberPassword}
-													onChange={
-														handleRememberToggle
-													}
-												/>
-												<div className="custom-control-label">
-													{" "}
-													Ghi nhớ mật khẩu{" "}
-												</div>
-											</label>
-										</div>
-
-										<div className="form-group">
-											<button
-												type="submit"
-												className="btn btn-primary btn-block">
-												{" "}
-												Login{" "}
-											</button>
-										</div>
-
-										{loginError && (
-											<p className="text-danger">
-												Tài khoản hoặc mật khẩu không
-												chính xác. Vui lòng thử lại.
-											</p>
-										)}
-									</form>
-								)
-							)}
+		<section className="section-content padding-y">
+			<div className="card mx-auto" style={{ width: "320px" }}>
+				<article className="card-body">
+					<header className="mb-4">
+						<h4 className="card-title">Đăng nhập</h4>
+					</header>
+					<form>
+						<div className="form-group">
+							<label>Tên đăng nhập</label>
+							<input
+								required="username"
+								className="form-control"
+								type="username"
+								placeholder="username"
+								value={email}
+								onChange={(e) => setEmail(e.target.value)}
+							/>
 						</div>
-					</div>
-				</div>
+						<div className="form-group">
+							<label>Mật khẩu</label>
+							<input
+								required="password"
+								className="form-control"
+								type="password"
+								placeholder="Mật khẩu"
+								value={password}
+								onChange={(e) => setPassword(e.target.value)}
+							/>
+						</div>
+						<div className="form-group mt-3">
+							{error && <p className="text-danger">{error}</p>}
+							<button
+								type="button"
+								onClick={handleLogin}
+								className="btn btn-primary btn-block">
+								Đăng nhập
+							</button>
+						</div>
+						<div className="form-group mt-3">
+							{/* <Logout/> */}
+							<label className="form-group mt-3">
+								Bạn chưa có tài khoản?{" "}
+								<Link to="/register" className="text-danger">
+									Đăng ký tài khoản
+								</Link>
+							</label>
+						</div>
+					</form>
+				</article>
 			</div>
-		</div>
+		</section>
 	);
 };
 
-export default Login;
+export default UserLogin;

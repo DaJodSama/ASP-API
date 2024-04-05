@@ -5,8 +5,8 @@ const Subscribe = () => {
 		<section class="section-subscribe padding-y-lg">
 			<div class="container">
 				<p class="pb-2 text-center text-white">
-					Delivering the latest product trends and industry news
-					straight to your inbox
+					Cung cấp các xu hướng sản phẩm mới nhất và tin tức trong
+					ngành ngay tới hộp thư đến của bạn
 				</p>
 
 				<div class="row justify-content-md-center">
@@ -24,13 +24,12 @@ const Subscribe = () => {
 									type="submit"
 									class="btn btn-block btn-warning">
 									{" "}
-									<i class="fa fa-envelope"></i> Subscribe{" "}
+									<i class="fa fa-envelope"></i> Đăng ký{" "}
 								</button>
 							</div>
 						</form>
 						<small class="form-text text-white-50">
-							We’ll never share your email address with a
-							third-party.{" "}
+						Chúng tôi sẽ không bao giờ chia sẻ địa chỉ email của bạn với bên thứ ba.{" "}
 						</small>
 					</div>
 				</div>

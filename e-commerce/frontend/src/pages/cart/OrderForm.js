@@ -1,17 +1,25 @@
-import React, { useState } from "react";
-import styles from "./OrderForm.css";
-import { POST_ADD } from "../../api/apiService";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import styles from "./OrderForm.css"; // Import file CSS vào
+import { useNavigate } from "react-router-dom";
 
-const OrderForm = ({ totalPrice }) => {
+const OrderForm = ({ totalPrice, odPrdUserId, productId, quantity, price }) => {
+	// Nhận ID người dùng từ props
+	console.log("odPrdUserId:", odPrdUserId);
+	console.log("Product:", productId);
+	const navigate = useNavigate();
 	const [orderData, setOrderData] = useState({
-		address: "",
-		email: "",
-		fullname: "",
-		note: "",
-		order_date: new Date().toISOString(),
-		phone_number: "",
-		status: 0,
-		total_money: totalPrice,
+		odPrdUserId: 6, // Sử dụng ID người dùng từ props
+		orderTotal: totalPrice,
+		orderDate: new Date().toISOString(),
+		orderStatus: 1,
+		// orderDetails: [
+		//   {
+		//     productId: productId, // Sẽ được tự động lấy khi thêm vào giỏ hàng
+		//     quantity: quantity,
+		//     price: price
+		//   }
+		// ]
 	});
 
 	const handleInputChange = (e) => {
@@ -22,107 +30,74 @@ const OrderForm = ({ totalPrice }) => {
 		});
 	};
 
+	// const handleProductChange = (e, index) => {
+	//   const { name, value } = e.target;
+	//   const updatedOrderDetails = [...orderData.orderDetails];
+	//   updatedOrderDetails[index][name] = value;
+	//   setOrderData({
+	//     ...orderData,
+	//     orderDetails: updatedOrderDetails
+	//   });
+	// };
+
 	const handleSubmit = (e) => {
 		e.preventDefault();
-
-		POST_ADD("orders", orderData)
+		axios
+			.post("http://localhost:5239/api/OrderProduct", orderData)
 			.then((response) => {
 				console.log(response.data);
-				alert("Order placed successfully!");
-				// Thực hiện các hành động khác nếu cần
+				// Thực hiện các hành động tiếp theo sau khi đặt hàng thành công
 			})
 			.catch((error) => {
 				console.error(error);
-				alert("Failed to place order. Please try again.");
+				alert("Đơn hàng đã được đặt thành công!");
+				localStorage.removeItem("cartItems");
+				navigate("/");
 			});
 	};
 
 	return (
-		<div className={styles["order-form-container"]}>
-			<h2 className={styles["order-form-title"]}>Place an Order</h2>
-			<form className={styles["order-form"]} onSubmit={handleSubmit}>
-				<label className={styles["form-label"]}>Full Name:</label>
+		<div className={styles.container}>
+			{" "}
+			{/* Sử dụng class từ file CSS */}
+			<h2>Đơn hàng mới</h2>
+			<form onSubmit={handleSubmit}>
+				{/* <label>User ID:</label> */}
 				<input
-					className={styles["form-input"]}
 					type="text"
-					name="fullname"
-					value={orderData.fullname}
+					name="odPrdUserId"
+					value={orderData.odPrdUserId}
 					onChange={handleInputChange}
 					required
 				/>
-
-				<label className={styles["form-label"]}>Email:</label>
+				<label>Tổng tiền:</label>
 				<input
-					className={styles["form-input"]}
-					type="email"
-					name="email"
-					value={orderData.email}
-					onChange={handleInputChange}
-					required
-				/>
-
-				<label className={styles["form-label"]}>Address:</label>
-				<input
-					className={styles["form-input"]}
-					type="text"
-					name="address"
-					value={orderData.address}
-					onChange={handleInputChange}
-					required
-				/>
-
-				<label className={styles["form-label"]}>Phone Number:</label>
-				<input
-					className={styles["form-input"]}
-					type="text"
-					name="phone_number"
-					value={orderData.phone_number}
-					onChange={handleInputChange}
-					required
-				/>
-
-				<label className={styles["form-label"]}>Note:</label>
-				<textarea
-					className={styles["form-textarea"]}
-					name="note"
-					value={orderData.note}
-					onChange={handleInputChange}
-				/>
-
-				<label className={styles["form-label"]}>Order Date:</label>
-				<input
-					className={styles["form-input"]}
-					type="text"
-					name="order_date"
-					value={orderData.order_date}
-					onChange={handleInputChange}
-					readOnly
-				/>
-
-				<label className={styles["form-label"]}>Total Money:</label>
-				<input
-					className={styles["form-input"]}
 					type="number"
-					name="total_money"
-					value={totalPrice}
+					name="orderTotal"
+					value={orderData.orderTotal}
+					onChange={handleInputChange}
 					readOnly
 				/>
-
-				<label className={styles["form-label"]}>Status:</label>
-				<select
-					className={styles["form-select"]}
-					name="status"
-					value={orderData.status}
+				<label>Ngày đặt hàng:</label>
+				<input
+					type="text"
+					name="orderDate"
+					value={orderData.orderDate}
 					onChange={handleInputChange}
-					required>
-					<option value={0}>Pending</option>
-					<option value={1}>Processing</option>
-					<option value={2}>Shipped</option>
-					{/* Thêm các tình trạng khác nếu cần */}
-				</select>
+					readOnly
+				/>
+				<label>Trạng thái:</label>
+				<input
+					type="text"
+					name="orderDate"
+					value={orderData.orderStatus}
+					onChange={handleInputChange}
+					readOnly
+				/>
+				<hr />
 
-				<button className={styles["form-button"]} type="submit">
-					Place Order
+				<button className="order-button" type="submit">
+					Đặt hàng
 				</button>
 			</form>
 		</div>

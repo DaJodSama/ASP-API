@@ -60,26 +60,6 @@ const Slider = () => {
 											</li>
 										</Link>
 									))}
-
-									{/* <li className="has-submenu">
-										<Link to="/">More items</Link>
-										<ul className="submenu">
-											<li>
-												<Link to="/">Submenu name</Link>
-											</li>
-											<li>
-												<Link to="/">
-													Great submenu
-												</Link>
-											</li>
-											<li>
-												<Link to="/">Another menu</Link>
-											</li>
-											<li>
-												<Link to="/">Some others</Link>
-											</li>
-										</ul>
-									</li> */}
 								</ul>
 							</nav>
 						</aside>
@@ -108,12 +88,12 @@ const Slider = () => {
 									</div>
 									<div className="carousel-item">
 										<img
-											src={require("../../assets/images/banners/slide1.jpg")}
+											src={require("../../assets/images/banners/slide2.jpg")}
 										/>
 									</div>
 									<div className="carousel-item">
 										<img
-											src={require("../../assets/images/banners/slide1.jpg")}
+											src={require("../../assets/images/banners/slide3.jpg")}
 										/>
 									</div>
 								</div>
@@ -142,25 +122,23 @@ const Slider = () => {
 						<div className="col-md d-none d-lg-block flex-grow-1">
 							<aside className="special-home-right">
 								<h6 className="bg-blue text-center text-white mb-0 p-2">
-									Popular category
+									Danh mục liên quan
 								</h6>
 
 								<div className="card-banner border-bottom">
 									<div
 										className="py-3"
 										style={{ width: "80%" }}>
-										<h6 className="card-title">
-											Men clothing
-										</h6>
+										<h6 className="card-title">Áo thun</h6>
 										<Link
-											to="/"
+											to="http://localhost:3000/product/list/1"
 											className="btn btn-secondary btn-sm">
 											{" "}
-											Source now{" "}
+											Xem ngay{" "}
 										</Link>
 									</div>
 									<img
-										src={require("../../assets/images/items/1.jpg")}
+										src={require("../../assets/images/items/8.jpg")}
 										height="80"
 										className="img-bg"
 									/>
@@ -171,17 +149,17 @@ const Slider = () => {
 										className="py-3"
 										style={{ width: "80%" }}>
 										<h6 className="card-title">
-											Winter clothing{" "}
+											Áo sơ mi{" "}
 										</h6>
 										<Link
-											to="/"
+											to="http://localhost:3000/product/list/5"
 											className="btn btn-secondary btn-sm">
 											{" "}
-											Source now{" "}
+											Xem ngay{" "}
 										</Link>
 									</div>
 									<img
-										src={require("../../assets/images/items/2.jpg")}
+										src={require("../../assets/images/items/4.jpg")}
 										height="80"
 										className="img-bg"
 									/>
@@ -190,18 +168,16 @@ const Slider = () => {
 									<div
 										className="py-3"
 										style={{ width: "80%" }}>
-										<h6 className="card-title">
-											Home inventory
-										</h6>
+										<h6 className="card-title">Áo khoác</h6>
 										<Link
-											to="/"
+											to="http://localhost:3000/product/list/4"
 											className="btn btn-secondary btn-sm">
 											{" "}
-											Source now{" "}
+											Xem ngay{" "}
 										</Link>
 									</div>
 									<img
-										src={require("../../assets/images/items/6.jpg")}
+										src={require("../../assets/images/items/1.jpg")}
 										height="80"
 										className="img-bg"
 									/>

@@ -10,6 +10,7 @@ import Cart from "./Cart";
 import ListCategory from "../pages/listcategory/ListCategory";
 import Register from "../pages/register/Register";
 import Login from "../pages/login/Login";
+import Profile from "../pages/profile/Profile";
 
 const Main = () => (
 	<main>
@@ -24,7 +25,8 @@ const Main = () => (
 			<Route path="/shopping-cart" element={<Cart />} />
 			<Route path="/login" element={<Login />} />
 			<Route path="/register" element={<Register />} />
-			<Route path="/payment" element={<Register />} />
+			<Route path="/payment" element={<Payment />} />
+			<Route path="/profile" element={<Profile />} />
 		</Routes>
 	</main>
 );

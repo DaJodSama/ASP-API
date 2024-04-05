@@ -1,0 +1,71 @@
+/* Tạo layout cho carousel */
+.slick-slider {
+    position: relative;
+    display: block;
+    box-sizing: border-box;
+  }
+  
+  .slick-list {
+    position: relative;
+    display: block;
+/* Căn giữa theo chiều dọc */
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .slick-track {
+    position: relative;
+    display: flex;
+    justify-content: center; /* Căn giữa theo chiều ngang */
+    align-items: center; 
+  }
+  
+  .slick-slide {
+    flex: 0 0 auto; /* Slide sẽ co giãn tự động */
+    height: auto; /* Chiều cao tự động */
+  }
+  
+  /* Tùy chỉnh các nút prev/next */
+  .slick-prev,
+  .slick-next {
+    position: absolute;
+    top: 50%; /* Đặt vị trí ở giữa theo chiều dọc */
+    transform: translateY(-50%); /* Dịch chuyển lên trên 50% để căn giữa */
+    z-index: 1; /* Đảm bảo nút hiển thị trên các slide */
+    width: 30px; /* Độ rộng */
+    height: 30px; /* Chiều cao */
+    background-color: rgba(0, 0, 0, 0.5); /* Màu nền */
+    color: white; /* Màu chữ */
+    border-radius: 50%; /* Hình dạng là hình tròn */
+    cursor: pointer; /* Con trỏ chuột khi di chuột vào */
+    display: flex; /* Sử dụng flexbox để căn giữa nội dung */
+    justify-content: center; /* Căn giữa theo chiều ngang */
+    align-items: center; /* Căn giữa theo chiều dọc */
+    transition: background-color 0.3s ease; /* Hiệu ứng khi hover */
+  }
+  
+  .slick-prev:hover,
+  .slick-next:hover {
+    background-color: rgba(0, 0, 0, 0.8); /* Màu nền khi hover */
+  }
+  
+  .slick-prev {
+    left: 20px; /* Vị trí bên trái */
+  }
+  
+  .slick-next {
+    right: 20px; /* Vị trí bên phải */
+  }
+  
+  /* Ẩn mũi tên prev/next khi không hover */
+  .slick-prev:not(:hover),
+  .slick-next:not(:hover) {
+    opacity: 0.5; /* Độ mờ */
+  }
+  
+  /* Ẩn các nút điều hướng khi không có đủ slide để scroll */
+  .slick-prev.slick-disabled,
+  .slick-next.slick-disabled {
+    display: none;
+  }

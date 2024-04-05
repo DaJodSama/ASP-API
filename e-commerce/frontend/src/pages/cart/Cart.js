@@ -1,103 +1,81 @@
+//
 import React, { useEffect, useState } from "react";
-import OrderForm from "./OrderForm";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../layouts/AuthContext";
+import { toast, ToastContainer } from "react-toastify";
+import "../../layouts/css/Style.css";
+import OrderForm from "./OrderForm";
 
-const Cart = ({ OrderTotal }) => {
-	const [galleryItems, setGalleryItems] = useState([]);
-	const [totalPrice, setTotalPrice] = useState(0);
-	const [discount, setDiscount] = useState(0);
-	const [quantities, setQuantities] = useState({});
+const Cart = ({ location }) => {
+	const [products, setProducts] = useState([]);
+	const navigate = useNavigate();
+	const [showOrderForm, setShowOrderForm] = useState(false);
+	const [hasNewProducts, setHasNewProducts] = useState(false); //  biến state này ktra gio hang co sp k0
 
-	useEffect(() => {
-		axios.get("http://localhost:5239/api/Product").then((response) => {});
-	}, []);
+	const { user } = useAuth();
 
 	useEffect(() => {
 		const storedCartItems = localStorage.getItem("cartItems");
-		if (storedCartItems) {
-			setGalleryItems(JSON.parse(storedCartItems));
-		}
-		const storedQuantities = localStorage.getItem("cartQuantities");
-		if (storedQuantities) {
-			setQuantities(JSON.parse(storedQuantities));
-		}
-	}, []);
+		const parsedCartItems = storedCartItems
+			? JSON.parse(storedCartItems)
+			: [];
+		setProducts(parsedCartItems);
+	}, [hasNewProducts]); // Sửa đổi dependency để re-render khi có sản phẩm mới
 
-	useEffect(() => {
-		localStorage.setItem("cartItems", JSON.stringify(galleryItems));
-		localStorage.setItem("cartQuantities", JSON.stringify(quantities));
-		calculateTotalPrice(galleryItems);
-	}, [galleryItems, quantities]);
-
-	const calculateTotalPrice = (items) => {
-		let total = 0;
-		let discountAmount = 0;
-
-		items.forEach((item) => {
-			let price = item.price * (quantities[item.id] || 1);
-			if (item.discount) {
-				price *= 1 - item.discount / 100;
-				discountAmount +=
-					item.price *
-					(item.discount / 100) *
-					(quantities[item.id] || 1);
-			}
-			total += price;
-		});
-
-		setTotalPrice(total);
-		setDiscount(discountAmount);
+	const handleRemoveCartItem = (productId) => {
+		const updatedCartItems = products.filter(
+			(item) => item.id !== productId
+		);
+		setProducts(updatedCartItems);
+		localStorage.setItem("cartItems", JSON.stringify(updatedCartItems));
+		setHasNewProducts(!hasNewProducts); // Cập nhật state để trigger re-render
 	};
 
-	const deleteGallery = (id) => {
-		const updatedItems = galleryItems.filter((item) => item.id !== id);
-		setGalleryItems(updatedItems);
-		calculateTotalPrice(updatedItems);
-
-		// Lấy giỏ hàng từ localStorage
-		const cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-		// Kiểm tra nếu giỏ hàng không tồn tại hoặc rỗng
-		if (!cart || cart.length === 0) {
-			return;
-		}
-
-		// Cập nhật giỏ hàng trong localStorage
-		const updatedCart = cart.filter((item) => item.id !== id);
-		localStorage.setItem("cart", JSON.stringify(updatedCart));
+	const handleUpdateQuantity = (productId, newQuantity) => {
+		const updatedCartItems = products.map((item) =>
+			item.id === productId ? { ...item, quantity: newQuantity } : item
+		);
+		setProducts(updatedCartItems);
+		localStorage.setItem("cartItems", JSON.stringify(updatedCartItems));
 	};
 
-	const deleteAllItems = () => {
-		localStorage.removeItem("cartItems");
-		localStorage.removeItem("cartQuantities");
-		setGalleryItems([]);
-		setQuantities({});
-		setTotalPrice(0);
-		setDiscount(0);
+	const handleIncreaseQuantity = (productId, currentQuantity) => {
+		handleUpdateQuantity(productId, currentQuantity + 1);
 	};
 
-	const increaseQuantity = (id) => {
-		setQuantities((prevQuantities) => ({
-			...prevQuantities,
-			[id]: (prevQuantities[id] || 0) + 1,
-		}));
-	};
-
-	const decreaseQuantity = (id) => {
-		if (quantities[id] > 1) {
-			setQuantities((prevQuantities) => ({
-				...prevQuantities,
-				[id]: prevQuantities[id] - 1,
-			}));
+	const handleDecreaseQuantity = (productId, currentQuantity) => {
+		if (currentQuantity > 1) {
+			handleUpdateQuantity(productId, currentQuantity - 1);
 		}
 	};
 
-	const handleQuantityChange = (id, newQuantity) => {
-		setQuantities((prevQuantities) => ({
-			...prevQuantities,
-			[id]: newQuantity,
-		}));
+	const totalPrice = products.reduce(
+		(total, product) => total + product.price * product.quantity,
+		0
+	);
+
+	function formatPrice(priceInXu) {
+		const dong = priceInXu * 1;
+		return new Intl.NumberFormat("vi-VN", {
+			style: "currency",
+			currency: "VND",
+		}).format(dong);
+	}
+
+	const handleShowOrderForm = () => {
+		if (user && products.length > 0) {
+			// Sử dụng userId thay vì user
+			navigate("/payment", { state: { totalPrice: totalPrice } });
+		} else if (user && products.length === 0) {
+			toast.error("Không có sản phẩm trong giỏ hàng.");
+		} else {
+			toast.error("Vui lòng đăng nhập để mua hàng");
+
+			setTimeout(() => {
+				navigate("/login");
+			}, 2000);
+		}
 	};
 
 	return (
@@ -106,190 +84,174 @@ const Cart = ({ OrderTotal }) => {
 				<div className="row">
 					<main className="col-md-9">
 						<div className="card">
-							<table className="table table-borderless table-shopping-cart">
-								<thead className="text-muted">
-									<tr className="small text-uppercase">
-										<th scope="col">Sản phẩm</th>
-										<th scope="col" width="120">
-											Số lượng
-										</th>
-										<th scope="col" width="120">
-											Giá
-										</th>
-										<th
-											scope="col"
-											className="text-right"
-											width="200">
-											{" "}
-										</th>
-									</tr>
-								</thead>
-								<tbody>
-									{galleryItems.map((galleryItem, index) => (
-										<tr key={index}>
+							{products.length === 0 && (
+								<h5 className="text-danger m-2 p-4 text-center">Không có sản phẩm nào trong giỏ hàng.</h5>
+							)}
+							{products.map((row) => (
+								<table
+									className="table table-borderless table-shopping-cart"
+									key={row.id}>
+									<thead className="text-muted">
+										<tr className="small text-uppercase">
+											<th scope="col">Sản phẩm</th>
+											<th scope="col" width="120">
+												Số lượng
+											</th>
+											<th scope="col" width="120">
+												Giá
+											</th>
+											<th
+												scope="col"
+												className="text-right"
+												width="200">
+												{" "}
+											</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
 											<td>
 												<figure className="itemside">
-													<img
-														src={require(`../../assets/images/items/${galleryItem.img}`)}
-														alt={`Gallery Image ${index}`}
-														style={{
-															width: "100px",
-															height: "150px",
-														}}
-													/>
+													<div className="aside">
+														<img
+															src={`./images/items/${row.image}`}
+															className="img-sm"
+															alt={row.title}
+														/>
+													</div>
+													<figcaption className="info">
+														<Link
+															to={`/product-detail?productId=${row.id}`}
+															className="img-wrap">
+															{row.name}
+														</Link>
+														<p className="text-muted small">
+															Size: XL, Color:
+															blue, Brand: Dior
+														</p>
+													</figcaption>
 												</figure>
-												<figcaption
-													className="info"
-													style={{
-														marginTop: "-100px",
-														marginLeft: "150px",
-														marginBottom: "40px",
-													}}>
-													<a
-														href="#"
-														className="title text-dark">
-														{galleryItem.name}
-													</a>
-												</figcaption>
 											</td>
-											<td width={150}>
-												<div
-													className="form-row d-flex align-items-center"
-													style={{
-														marginLeft: "-45%",
-													}}>
-													<span className="input-group-btn">
-														<button
-															style={{
-																marginTop:
-																	"40px",
-															}}
-															className="btn btn-outline-primary"
-															type="button"
-															onClick={() =>
-																decreaseQuantity(
-																	galleryItem.id
-																)
-															}>
-															-
-														</button>
-													</span>
-													<input
-														type="text"
-														className="form-control text-center mx-2"
-														style={{
-															width: "70px",
-															marginTop: "40px",
-														}}
-														value={
-															quantities[
-																galleryItem.id
-															] || 1
+											<td>
+												<div className="quantity-control">
+													<button
+														onClick={() =>
+															handleDecreaseQuantity(
+																row.id,
+																row.quantity
+															)
 														}
-														readOnly
-													/>
-													<span className="input-group-btn">
-														<button
-															style={{
-																marginTop:
-																	"40px",
-															}}
-															className="btn btn-outline-primary"
-															type="button"
-															onClick={() =>
-																increaseQuantity(
-																	galleryItem.id
-																)
-															}>
-															+
-														</button>
+														className="btn btn-outline-secondary btn-sm">
+														-
+													</button>
+													<span className="quantity mx-2">
+														{row.quantity}
 													</span>
+													<button
+														onClick={() =>
+															handleIncreaseQuantity(
+																row.id,
+																row.quantity
+															)
+														}
+														className="btn btn-outline-secondary btn-sm">
+														+
+													</button>
 												</div>
 											</td>
 											<td>
-												<figcaption className="info">
-													<p
-														style={{
-															marginTop: "40px",
-															width: "100px",
-														}}>
-														{galleryItem.discount
-															? (
-																	galleryItem.price *
-																	(1 -
-																		galleryItem.discount /
-																			100)
-															  ).toLocaleString(
-																	"vi-VN"
-															  ) + " VND"
-															: galleryItem.price.toLocaleString(
-																	"vi-VN"
-															  )}
-													</p>
-												</figcaption>
+												<div className="price-wrap">
+													<var className="price">
+														{row.price *
+															row.quantity}{" "}
+														đ
+													</var>
+													<small className="text-muted">
+														{" "}
+														{formatPrice(
+															row.price
+														)}{" "}
+														each{" "}
+													</small>
+												</div>
 											</td>
 											<td className="text-right">
 												<button
-													className="btn btn-light"
+													className="btn btn-danger"
 													onClick={() =>
-														deleteGallery(
-															galleryItem.id
+														handleRemoveCartItem(
+															row.id
 														)
 													}>
-													Remove
+													{" "}
+													Xóa
 												</button>
 											</td>
 										</tr>
-									))}
-								</tbody>
-							</table>
-
-							<div className="card-body border-top">
-								<a href="/" className="btn btn-light">
-									{" "}
-									<i className="fa fa-chevron-left"></i> Trở
-									về{" "}
-								</a>
-							</div>
+									</tbody>
+								</table>
+							))}
 						</div>
-
-						<div className="alert alert-success mt-3">
-							<p className="icontext">
-								<i className="icon text-success fa fa-truck"></i>{" "}
-								Free Delivery within 1-2 weeks
-							</p>
+						<div className="card-body border-top">
+							<button
+								onClick={handleShowOrderForm}
+								totalPrice={totalPrice}
+								userId={user && user.id}
+								productId={
+									products.length > 0 ? products[0].id : ""
+								}
+								className="btn btn-info float-md-right">
+								Thanh toán{" "}
+								<i className="fa fa-chevron-right"></i>
+							</button>
+							<Link to="/" className="btn btn-light">
+								{" "}
+								<i className="fa fa-chevron-left"></i> Tiếp tục
+								mua sắm{" "}
+							</Link>
 						</div>
 					</main>
 					<aside className="col-md-3">
-						<div className="card mb-3">
+						<div className="card">
 							<div className="card-body">
 								<dl className="dlist-align">
-									<dt>Total price:</dt>
+									<dt>Tổng tiền: </dt>
 									<dd className="text-right">
-										{totalPrice.toLocaleString("vi-VN")} VND
-                    
-                  </dd>
+										{formatPrice(totalPrice)}
+									</dd>
 								</dl>
-								<hr />
+								<dl className="dlist-align">
+									<dt>Giảm giá:</dt>
+									<dd className="text-right">0</dd>
+								</dl>
+								<dl className="dlist-align">
+									<dt>Tổng tiền:</dt>
+									<dd className="text-right  h5">
+										<strong>${totalPrice}</strong>
+									</dd>
+								</dl>
+
 								<p className="text-center mb-3">
 									<img
 										src={require("../../assets/images/misc/payments.png")}
-										height="26"
+										style={{ height: "26" }}
 										alt="Payments"
 									/>
 								</p>
-								<Link to={{ pathname: "/payment", state: { totalPrice: OrderTotal } }}>
-									<button
-										className="btn btn-primary"
-										onClick={deleteAllItems}>
-										Thanh toán
-									</button>
-								</Link>
 							</div>
 						</div>
 					</aside>
 				</div>
 			</div>
+			<ToastContainer
+				position="top-right"
+				autoClose={3000}
+				hideProgressBar={false}
+				closeOnClick={true}
+				pauseOnHover={true}
+				draggable={true}
+				progress
+			/>
 		</section>
 	);
 };

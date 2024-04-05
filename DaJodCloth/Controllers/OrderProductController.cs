@@ -30,6 +30,9 @@ namespace DaJodCloth.Controllers
                 OrderStatus = p.OrderStatus
             }).ToList();
 
+            var totalResults = OrderProductsDtos.Count;
+            Response.Headers.Append("Content-Range", $"{totalResults}");
+
             return Ok(OrderProductsDtos);
         }
 
@@ -69,6 +72,9 @@ namespace DaJodCloth.Controllers
 
             // Sau khi thêm thành công, cập nhật lại Id của OrderProductsDto
             OrderProductsDto.Id = OrderProduct.Id;
+
+            var totalResults = await _context.OrderProducts.CountAsync(); // Số lượng OrderProducts trong cơ sở dữ liệu
+            Response.Headers.Append("Content-Range", $"{totalResults}");
 
             return CreatedAtAction(nameof(GetOrderProducts), new { id = OrderProduct.Id }, OrderProductsDto);
         }
@@ -112,6 +118,9 @@ namespace DaJodCloth.Controllers
                     throw;
                 }
             }
+
+            var totalResults = await _context.OrderProducts.CountAsync(); // Số lượng OrderProducts trong cơ sở dữ liệu
+            Response.Headers.Append("Content-Range", $"{totalResults}");
 
             return NoContent();
         }

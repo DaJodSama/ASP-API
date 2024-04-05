@@ -6,148 +6,71 @@ class Footer extends Component {
 	}
 	render() {
 		return (
-			<footer className="section-footer bg-secondary">
-				<div className="container">
-					<section className="footer-top padding-y-lg text-white">
-						<div className="row">
-							<aside className="col-md col-6">
-								<h6 className="title">Brands</h6>
-								<ul className="list-unstyled">
+			<footer class="section-footer bg-gray">
+				<div class="container">
+					<section class="footer-top padding-y-lg text-black">
+						<div class="row">
+							<aside
+								class="col-md col-6 text-center">
+								<h6 class="title">Danh Mục</h6>
+								<ul class="list-unstyled">
 									<li>
 										{" "}
-										<Link to="/">Adidas</Link>
+										<Link to="http://localhost:3000/product/list/1">Áo thun</Link>
 									</li>
 									<li>
 										{" "}
-										<Link to="/">Puma</Link>
+										<Link to="http://localhost:3000/product/list/4">Áo khoác</Link>
 									</li>
 									<li>
 										{" "}
-										<Link to="/">Reebok</Link>
+										<Link to="http://localhost:3000/product/list/3">Quần</Link>
 									</li>
 									<li>
 										{" "}
-										<Link to="/">Nike</Link>
-									</li>
-								</ul>
-							</aside>
-							<aside className="col-md col-6">
-								<h6 className="title">Company</h6>
-								<ul className="list-unstyled">
-									<li>
-										{" "}
-										<Link to="/">About us</Link>
-									</li>
-									<li>
-										{" "}
-										<Link to="/">Career</Link>
-									</li>
-									<li>
-										{" "}
-										<Link to="/">Find a store</Link>
-									</li>
-									<li>
-										{" "}
-										<Link to="/">Rules and terms</Link>
-									</li>
-									<li>
-										{" "}
-										<Link to="/">Sitemap</Link>
+										<Link to="http://localhost:3000/product/list/5">Áo sơ mi</Link>
 									</li>
 								</ul>
 							</aside>
-							<aside className="col-md col-6">
-								<h6 className="title">Help</h6>
-								<ul className="list-unstyled">
+							<aside class="col-md-6 text-center">
+								<h6 class="title">Social</h6>
+								<ul class="list-unstyled">
 									<li>
-										{" "}
-										<Link to="/">Contact us</Link>
-									</li>
-									<li>
-										{" "}
-										<Link to="/">Money refund</Link>
-									</li>
-									<li>
-										{" "}
-										<Link to="/">Order status</Link>
-									</li>
-									<li>
-										{" "}
-										<Link to="/">Shipping info</Link>
-									</li>
-									<li>
-										{" "}
-										<Link to="/">Open dispute</Link>
-									</li>
-								</ul>
-							</aside>
-							<aside className="col-md col-6">
-								<h6 className="title">Account</h6>
-								<ul className="list-unstyled">
-									<li>
-										{" "}
-										<Link to="/"> User Login </Link>
-									</li>
-									<li>
-										{" "}
-										<Link to="/"> User register </Link>
-									</li>
-									<li>
-										{" "}
-										<Link to="/"> Account Setting </Link>
-									</li>
-									<li>
-										{" "}
-										<Link to="/"> My Orders </Link>
-									</li>
-								</ul>
-							</aside>
-							<aside className="col-md">
-								<h6 className="title">Social</h6>
-								<ul className="list-unstyled">
-									<li>
-										<Link to="/">
+										<a href="https://www.facebook.com/nvtd.321">
 											{" "}
-											<i className="fab fa-facebook"></i>{" "}
+											<i class="fab fa-facebook"></i>{" "}
 											Facebook{" "}
-										</Link>
+										</a>
 									</li>
 									<li>
-										<Link to="/">
+										<a href="https://www.instagram.com/thnd.ieao/">
 											{" "}
-											<i className="fab fa-twitter"></i>{" "}
-											Twitter{" "}
-										</Link>
-									</li>
-									<li>
-										<Link to="/">
-											{" "}
-											<i className="fab fa-instagram"></i>{" "}
+											<i class="fab fa-instagram"></i>{" "}
 											Instagram{" "}
-										</Link>
+										</a>
 									</li>
 									<li>
-										<Link to="/">
+										<a href="https://www.youtube.com/channel/UCwqkDkrv6eClRKID4_6owgQ">
 											{" "}
-											<i className="fab fa-youtube"></i>{" "}
+											<i class="fab fa-youtube"></i>{" "}
 											Youtube{" "}
-										</Link>
+										</a>
 									</li>
 								</ul>
 							</aside>
 						</div>
 					</section>
 
-					<section className="footer-bottom text-center">
-						<p className="text-white">
+					<section class="footer-bottom text-center bg-dark">
+						<p class="text-white">
 							Privacy Policy - Terms of Use - User Information
 							Legal Enquiry Guide
 						</p>
-						<p className="text-muted">
+						<p class="text-muted">
 							{" "}
 							&copy 2019 Company name, All rights reserved{" "}
 						</p>
-						<br />
+						<br></br>
 					</section>
 				</div>
 			</footer>
